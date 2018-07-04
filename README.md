@@ -6,3 +6,4 @@ CS+X 資料科學與程式設計
 課堂作業
 回家作業
 # WEEK2
+[classwork1](https://yongwen-yang.github.io/example/classwork1.html)
