@@ -1,0 +1,31 @@
+---
+title: "classwork2"
+author: "YongWen"
+date: "2018年7月11日"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+以點作圖    
+```{r}
+library(ggplot2)
+
+cars
+ggplot(data=cars, aes(x=speed, y=dist)) + geom_point()
+```
+以線作圖    
+```{r}
+ggplot(data=cars, aes(x=speed, y=dist)) + geom_line()
+```
+長條圖    
+```{r}
+ggplot(data=cars,aes(x=speed))+
+  geom_bar(fill="lightblue",colour="black")
+```
+連續型長條圖
+```{r}
+ggplot(data=cars,aes(x=speed))+
+  geom_histogram()
+```
