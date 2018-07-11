@@ -5,5 +5,5 @@
 課堂作業    
 [classwork1](https://yongwen-yang.github.io/example/classwork1.html)    
 回家作業        
-[homework1] (file:///C:/Users/%E8%A9%A0%E9%9B%AF/Desktop/R%E8%AA%9E%E8%A8%80/example/homework1.html)
+[homework1] (https://yongwen-yang.github.io/example/homework1.html)
 # WEEK2
