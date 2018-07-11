@@ -8,7 +8,7 @@
 [homework1](https://yongwen-yang.github.io/example//WEEK1/homework1.html)
 # WEEK2
 課堂作業    
-
+[CW2](https://yongwen-yang.github.io/example/WEEK2/CW2.html)    
 回家作業    
 
 # WEEK3
