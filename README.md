@@ -3,7 +3,7 @@
 台師大機電工程學系    
 # WEEK1
 課堂作業    
-[classwork1](https://yongwen-yang.github.io/example/classwork1.html)    
+[classwork1](https://yongwen-yang.github.io/example/WEEK1/classwork1.html)    
 回家作業        
-[homework1] (https://yongwen-yang.github.io/example/homework1.html)
+[homework1](https://yongwen-yang.github.io/example//WEEK1/homework1.html)
 # WEEK2
