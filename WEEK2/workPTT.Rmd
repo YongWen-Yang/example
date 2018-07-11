@@ -34,9 +34,9 @@ pttTestFunction <- function(URL, filename)
   write.table(allText, filename) 
   #close(out) 
 }
-
 ```
-網路爬蟲    
+
+網路爬蟲
 ```{r}
 #https://www.ptt.cc/bbs/Tech_Job/index.html
 id = c(3128:3129)
@@ -46,7 +46,8 @@ pttTestFunction(URL[1], filename[1])
 mapply(pttTestFunction, 
        URL = URL, filename = filename)
 ```
-文本清理    
+
+文本清理
 ```{r}
 rm(list=ls(all.names = TRUE))
 library(NLP)
@@ -71,7 +72,7 @@ docs <- tm_map(docs, toSpace, "我")
 docs <- tm_map(docs, toSpace, "是")
 docs <- tm_map(docs, toSpace, "看板")
 docs <- tm_map(docs, toSpace, "作者")
-docs <- tm_map(docs, toSpace, "發信站"
+docs <- tm_map(docs, toSpace, "發信站")
 docs <- tm_map(docs, toSpace, "批踢踢實業坊")
 docs <- tm_map(docs, toSpace, "[a-zA-Z]")
 #移除標點符號 (punctuation)
@@ -81,7 +82,8 @@ docs <- tm_map(docs, removeNumbers)
 docs <- tm_map(docs, stripWhitespace)
 docs
 ```
-詞頻矩陣    
+
+詞頻矩陣
 ```{r}
 mixseg = worker()
 jieba_tokenizer=function(d){
@@ -93,7 +95,8 @@ freqFrame = freqFrame[order(freqFrame$Freq,decreasing=TRUE), ]
 library(knitr)
 kable(head(freqFrame), format = "markdown")
 ```
-文字雲    
+
+文字雲
 ```{r}
 wordcloud(freqFrame$Var1,freqFrame$Freq,
           scale=c(5,0.1),min.freq=50,max.words=150,
