@@ -9,6 +9,7 @@
 # WEEK2
 課堂作業    
 [CW2](https://yongwen-yang.github.io/example//WEEK2/CW2.html)    
+[workPTT](https://yongwen-yang.github.io/example//WEEK2/workPTT.html)  
 回家作業    
 
 # WEEK3
