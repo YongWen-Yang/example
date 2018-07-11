@@ -1,0 +1,66 @@
+library(xml2)
+library(tmcn)
+library(rvest)
+pttTestFunction <- function(URL, filename)
+{
+  #URL   = "https://www.ptt.cc/bbs/Tech_Job/index.html"
+  html  = read_html(URL)
+  title = html_nodes(html, "a")
+  href  = html_attr(title, "href")
+  data = data.frame(title = toUTF8(html_text(title)),
+                    href = href)
+  data = data[-c(3128:3129),]
+  getContent <- function(x) {
+    url  = paste0("https://www.ptt.cc", x)
+    tag  = html_node(read_html(url), 'div#main-content.bbs-screen.bbs-content')
+    text = toUTF8(html_text(tag))
+  }
+  #getContent(data$href[1])
+  allText = sapply(data$href, getContent)
+  allText
+  #out <- file(filename, "w", encoding="BIG-5") 
+  write.table(allText, filename) 
+  #close(out) 
+}
+
+
+#https://www.ptt.cc/bbs/Tech_Job/index.html
+id = c(3128:3129)
+URL = paste0("https://www.ptt.cc/bbs/Tech_Job/index", id, ".html")
+filename = paste0(id, ".txt")
+pttTestFunction(URL[1], filename[1])
+mapply(pttTestFunction, 
+       URL = URL, filename = filename)
+
+rm(list=ls(all.names = TRUE))
+library(NLP)
+library(tm)
+library(jiebaRD)
+library(jiebaR)
+library(RColorBrewer)
+library(wordcloud)
+filenames <- list.files(getwd(), pattern="*.txt")
+files <- lapply(filenames, readLines)
+docs <- Corpus(VectorSource(files))
+#移除可能有問題的符號
+toSpace <- content_transformer(function(x, pattern) {
+  return (gsub(pattern, " ", x))
+}
+)
+docs <- tm_map(docs, toSpace, "※")
+docs <- tm_map(docs, toSpace, "◆")
+docs <- tm_map(docs, toSpace, "‧")
+docs <- tm_map(docs, toSpace, "的")
+docs <- tm_map(docs, toSpace, "我")
+docs <- tm_map(docs, toSpace, "是")
+docs <- tm_map(docs, toSpace, "看板")
+docs <- tm_map(docs, toSpace, "作者")
+docs <- tm_map(docs, toSpace, "發信站")
+docs <- tm_map(docs, toSpace, "批踢踢實業坊")
+docs <- tm_map(docs, toSpace, "[a-zA-Z]")
+#移除標點符號 (punctuation)
+#移除數字 (digits)、空白 (white space)
+docs <- tm_map(docs, removePunctuation)
+docs <- tm_map(docs, removeNumbers)
+docs <- tm_map(docs, stripWhitespace)
+docs
