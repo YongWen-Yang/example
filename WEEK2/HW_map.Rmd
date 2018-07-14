@@ -1,0 +1,42 @@
+---
+title: "HW2"
+author: "yongwen"
+date: "2018年7月14日"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+台灣地圖
+```{r}
+library(ggmap)
+library(mapproj)
+map <- get_map(location = 'Taiwan', zoom = 7)
+ggmap(map)
+
+```
+經緯度(121,23)的道路圖
+```{r}
+map <- get_map(location = c(lon = 121, lat = 23),
+               zoom = 10, language = "zh-TW", maptype = "roadmap")
+ggmap(map)
+```
+經緯度(121,23)的衛星圖
+```{r}
+map <- get_map(location = c(lon = 121, lat = 23),
+               zoom = 10, language = "zh-TW", maptype = "satellite")
+ggmap(map)
+```
+經緯度(121.2,23.5)的道路圖
+```{r}
+map <- get_map(location=c(lon=121.2,lat=23.5),
+               zoom=10,language="zh-TW",maptype="roadmap")
+ggmap(map)
+```
+經緯度(121.2,23.5)的衛星圖
+```{r}
+map <- get_map(location=c(lon=121.2,lat=23.5),
+               zoom=10,language="zh-TW",maptype="satellite")
+ggmap(map)
+```
