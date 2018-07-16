@@ -1,5 +1,5 @@
-#CS+X 資料科學與程式設計        
-我是楊詠雯    
+# CS+X 資料科學與程式設計        
+My name is 楊詠雯.   
 台師大機電工程學系    
 # WEEK1
 課堂作業    
@@ -11,7 +11,7 @@
 [CW2](https://yongwen-yang.github.io/example//WEEK2/CW2.html)    
 [workPTT](https://yongwen-yang.github.io/example//WEEK2/workPTT.html)  
 回家作業    
-
+[HW_map](https://yongwen-yang.github.io/example//WEEK2/HW_map.html)
 # WEEK3
 課堂作業    
 
