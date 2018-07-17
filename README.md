@@ -3,15 +3,30 @@ My name is 楊詠雯.
 台師大機電工程學系    
 # WEEK1
 課堂作業    
+1.建立github帳號    
+2.安裝github desktop    
+3.安裝R studio    
+4.建立一個Rmarkdown檔    
+5.HTML    
 [classwork1](https://yongwen-yang.github.io/example/WEEK1/classwork1.html)    
-回家作業        
+回家作業       
+1.Data camp Introduction to R     
+2.Data camp Intermediate R    
 [homework1](https://yongwen-yang.github.io/example//WEEK1/homework1.html)
 # WEEK2
-課堂作業    
+課堂作業     
+1.資料型態    
+2.ggplot2 資料存取    
+3.利用PTT學習網路爬蟲     
+4.爬蟲程式     
+5.word cloud     
 [CW2](https://yongwen-yang.github.io/example//WEEK2/CW2.html)    
 [workPTT](https://yongwen-yang.github.io/example//WEEK2/workPTT.html)  
-回家作業    
-[HW_map](https://yongwen-yang.github.io/example//WEEK2/HW_map.html)
+回家作業     
+1.學習ggmap    
+2.PTT wordcloud practice       
+[HW_map](https://yongwen-yang.github.io/example//WEEK2/HW_map.html)    
+[makeupPTT](https://yongwen-yang.github.io/example//WEEK2/makeupPTT.html)  
 # WEEK3
 課堂作業    
 
