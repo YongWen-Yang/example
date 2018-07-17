@@ -27,8 +27,8 @@ My name is 楊詠雯.
 2.PTT wordcloud practice   
 3.preview EDA
 [HW_map](https://yongwen-yang.github.io/example//WEEK2/HW_map.html)    
-[makeupPTT](https://yongwen-yang.github.io/example//WEEK2/makeupPTT.html)  
-[previewEDA](https://yongwen-yang.github.io/example//WEEK2/previewEDA.html) 
+[makeupPTT](https://yongwen-yang.github.io/example//WEEK2/makeupPTT.html)      
+[previewEDA](https://yongwen-yang.github.io/example//WEEK2/previewEDA.html)     
 # WEEK3
 課堂作業    
 
