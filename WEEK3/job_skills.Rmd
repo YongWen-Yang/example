@@ -1,0 +1,243 @@
+---
+title: "EDA_job"
+author: "yongwen"
+date: "2018年7月18日"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Data from "https://www.kaggle.com/ramamet4/app-store-apple-data-set-10k-apps"
+
+```{r}
+TestData = read.csv("./job_skills.csv", quote = "", 
+                 row.names = NULL, 
+                 stringsAsFactors = FALSE)
+str(TestData)
+```
+
+```{r, include=FALSE, echo = FALSE}
+library(data.table)
+library(ggplot2)
+library(sqldf)
+library(rworldmap)
+library(ggmap)
+library(mapproj)
+library(ggplot2)
+library(maptools)
+library(maps)
+library(wordcloud)
+# library(qdap)
+library(tm)
+library(stringr)
+library(SnowballC)   
+library(Tmisc)
+library(scales)
+
+# =================================================================== #
+# Defining all custom functions at the beginning.
+# =================================================================== #
+# function to aggregate text specific to a single publisher/ media house.
+create_text<- function( datadf )
+{
+    print(nrow(datadf))
+    # creating empty array
+    textarrdf = c(" ")
+    
+    for(i in 1:nrow(datadf))
+    { 
+        temp_arr1 = datadf[i, "Responsibilities"]
+        temp_arr2 = datadf[i, "Min_qual"]
+        temp_arr3 = datadf[i, "Pref_qual"]
+        
+        textarrdf = paste(textarrdf, temp_arr1, temp_arr2, temp_arr3, sep = " ")
+        
+    }
+    
+    return(textarrdf)
+} 
+
+# function to copy to clipboard:
+copyfn <- function(z) write.table(z, "clipboard" , sep = "\t", row.names = F)
+
+```
+In this script, we will explore the open roles at Google, and try to see what common attributes Google is looking for, in future employees. 
+
+First let us read the input file:
+```{r, echo=TRUE, include=FALSE}
+# Read input file:
+google_skills <- data.frame(fread("./job_skills.csv"))
+
+colnames(google_skills) <- c("Company", "Title", "Category", "Location", "Responsibilities", "Min_qual",
+                             "Pref_qual")
+str(google_skills)
+
+```
+# Job Categories
+First, let us take a look at the job categories:
+```{r, echo = FALSE}
+table(google_skills$Category)
+```
+Surprisingly, there are more roles open for the "Marketing and Communications" and "Sales & Account Management" categories, as compared to the traditional technical business units. (like Software Engineering or networking)
+
+
+# Internship versus Full-time roles:
+Let us see how many roles are fulltime and how many are for students:
+```{r, echo = TRUE}
+google_skills$job_fte <- ifelse( (grepl("Intern ", google_skills$Title)) == TRUE, "Internships",
+                            ifelse( (grepl("Intern,", google_skills$Title)) == TRUE, "Internships", "Full-time"))
+
+
+mytable <- table(google_skills$job_fte)
+lbls <- paste(names(mytable), "\n", mytable, sep="")
+pie(mytable, labels = lbls, 
+    main="Pie Chart of Full-time versus part-time")
+```
+
+As expected, only ~13% of roles are for students i.e. internships.
+
+
+  
+# Technical Roles:
+Since Google is pre-dominantly technical company, let us see how many positions need technical skills, irrespective of the business unit (job category)
+
+a) Roles related to "Google Cloud". So we look for the phrase either in the job title or the responsibilities:
+```{r, echo=FALSE, include=TRUE}
+google_skills$cloud_flag <- ifelse( grepl("Google Cloud", google_skills$Title)==TRUE, "cloud",
+                              ifelse( grepl( "Google Cloud", google_skills$Pref_qual) == TRUE, "cloud",   
+                              ifelse( grepl( "Google Cloud", google_skills$Responsibilities) == TRUE, "cloud",  
+                                    "regular"  )))
+table(google_skills$cloud_flag)
+ggplot(google_skills) + geom_bar(aes(x = cloud_flag))
+```
+
+Thus, 20% of the roles are related to Cloud infrastructure, clearly showing that Google is making Cloud services a high priority.
+  
+
+
+# Educational Qualifications:
+a) What is the minimum qualification needed for these roles?
+```{r, echo=FALSE, include=TRUE}
+google_skills$min_degree <- ifelse( grepl("Bachelor", google_skills$Min_qual) == TRUE, "Bachelor",
+                           ifelse( grepl("BA/BS", google_skills$Min_qual)==TRUE, "Bachelor",
+                           ifelse( grepl("Master", google_skills$Min_qual)==TRUE, "Master",
+                           ifelse( grepl("PhD", google_skills$Min_qual)== TRUE, "PhD", "other"))))
+
+ggplot(google_skills, aes(min_degree)) + 
+    geom_bar(aes(y = (..count..)/sum(..count..)), fill = "blue") + 
+    scale_y_continuous(labels=scales::percent) +
+    ylab("relative frequencies")
+```
+
+80% of the roles need a minimum of Bachelors degree.  
+  
+  
+  
+  
+b) What is the preferred qualification needed for these roles?
+```{r, echo=FALSE, include=TRUE}
+google_skills$pref_degree <- ifelse( grepl("PhD", google_skills$Pref_qual) == TRUE, "PhD",
+                          ifelse( grepl("Master", google_skills$Pref_qual)==TRUE, "Master",
+                          ifelse( grepl("MBA", google_skills$Pref_qual)==TRUE, "Master",
+                          ifelse( grepl("MS", google_skills$Pref_qual)== TRUE, "Master", "Bachelor"))))
+
+ggplot(google_skills, aes(pref_degree)) + 
+    geom_bar(aes(y = (..count..)/sum(..count..)), fill = "blue") + 
+    scale_y_continuous(labels=scales::percent) +
+    ylab("relative frequencies")
+```
+
+In terms of preferred qualifications, we see the roles requiring a masters or above increases to almost 25%.
+  
+  
+  
+  
+# Google Engineers:
+Google is famous for hiring engineers for all types of roles. How many roles need a technical or Engineering degree in Engineering?
+As seen in the graph below, 35% of roles need technical expertise, including those in marketing and non-engineering roles. 
+```{r, echo=FALSE, include=TRUE}
+google_skills$tech_flag <- ifelse( grepl("Engineering", google_skills$Min_qual) == TRUE, "tech",
+                             ifelse( grepl("technical", google_skills$Min_qual) == TRUE, "tech",
+                             ifelse( grepl("Engineering", google_skills$Pref_qual) == TRUE, "tech",
+                             ifelse( grepl("technical", google_skills$Pref_qual)==TRUE, "tech", "other"))))
+
+ggplot(google_skills, aes(tech_flag)) + 
+    geom_bar(aes(y = (..count..)/sum(..count..))) + 
+    scale_y_continuous(labels=scales::percent) +
+    ylab("relative frequencies")
+```
+  
+  
+
+
+
+We see that 30% of the roles require at least 5-years, while 35% of roles need even more experience.
+So if you did not get hired at Google after graduation, no worries. You have a better chance after gaining a strong experience in other companies.
+
+
+
+
+  
+    
+# Role Locations:
+The dataset does not have the geographical coordinates for mapping. So we solve the problem by using the geocode() function and the amazing Rworldmap package.
+We are only plotting the locations, so some places would have more roles than others. 
+So, we see open roles in all parts of the world. However, the maximum positions are in US, followed by UK, and then Europe as a whole.
+  
+The geocode function takes a while (10+ mins) and hence the script may terminate, hence commenting this part of the code. 
+If you uncomment the code and run on your local machine, the script is a lot faster (2-3 mins max). 
+Once the script completes, you should see a gray world map, with blue city markers showing the locations of the job postings. (image link below)
+
+![Google open roles across the world] https://github.com/anurajaram/images/blob/master/google_job_locations.jpg
+
+  
+# Responsibilities - Word Cloud:
+Let us create a word cloud to see what skills are most needed for the Cloud engineering roles:
+We see that words like "partner", "custom solutions", "cloud", strategy", "experience" are more frequent than any specific technical skills. 
+This shows that the Google cloud roles are best filled by senior resources where leadership and business skills become more significant than expertise in a specific technology.
+
+```{r, echo=FALSE, include=FALSE}
+# Create text_document for all jobs related to Google Cloud
+text_dict_source <- subset(google_skills, cloud_flag == "cloud")
+# text_dict_source <- subset(google_skills, exp_data >= 12 )
+# text_dict_source <- subset(google_skills, Category == "Hardware Engineering")
+row.names(text_dict_source) <- NULL
+
+
+text_sourcedf <- create_text( text_dict_source)
+
+
+
+# Clean up the text:
+# remove non-ascii characters, if any:
+text_sourcedf2 <- iconv(text_sourcedf, "latin1", "ASCII", sub="")
+
+# convert all text to lowercase:
+text_sourcedf2 = tolower(text_sourcedf2)
+
+
+# create word corpus and perform cleaning and pre-processing
+wordCorpus <- Corpus(VectorSource(text_sourcedf2))
+summary(wordCorpus)
+
+# processing and clean the text
+wordCorpus <- tm_map(wordCorpus, removePunctuation)
+wordCorpus <- tm_map(wordCorpus, removeNumbers)
+wordCorpus <- tm_map(wordCorpus, content_transformer(tolower))
+wordCorpus <- tm_map(wordCorpus, removeWords, stopwords("english"))
+wordCorpus <- tm_map(wordCorpus, stripWhitespace)
+wordCorpus <- tm_map(wordCorpus, stemDocument) 
+
+
+
+# create word clouds 
+wordCorpus1 <- tm_map(wordCorpus, stemDocument)
+# code to create a word cloud:
+```
+
+```{r, echo=FALSE, include=TRUE}
+wordcloud(wordCorpus1, scale=c(5,0.5), max.words=100, random.order=FALSE, 
+          rot.per=0.35, use.r.layout=FALSE, colors = brewer.pal(8, "Dark2"))
+```

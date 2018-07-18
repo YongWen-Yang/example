@@ -1,0 +1,20 @@
+---
+title: "EDA_practice"
+author: "yongwen"
+date: "2018å¹?7???18?—¥"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+#Data from "https://www.kaggle.com/ramamet4/app-store-apple-data-set-10k-apps"
+```{r}
+TestData = read.csv('./test.csv')
+Names = TestData$Name
+splitTitle <- function(x){
+  strsplit(x, split='[,.]')[[1]]
+}
+Temp = sapply(as.character(Names), splitTitle)
+str(TestData)
+```

@@ -1,0 +1,39 @@
+nrow(iris)
+告訴我們內建資料 iris 有幾個觀測值
+ncol(iris) 
+告訴我們內建資料 iris 有幾個變數
+dim(iris)
+告訴我們內建資料 iris 有幾個觀測值與有幾個變數
+head(iris) 
+印出內建資料 iris 的前六個觀測值（含變數名稱）
+tail(iris) 
+印出內建資料 iris 的後六個觀測值（含變數名稱）
+names(iris)
+印出內建資料 iris 的五個變數名稱
+summary(iris) 
+印出內建資料 iris 的變數描述性統計
+str() 函數可以輸出關於資料很多的資訊：
+像是資料結構的種類、觀測值數、變數個數、變數名稱
+hist()	直方圖	
+hist(rnorm(1000))
+boxplot()	盒鬚圖	
+boxplot(Sepal.Length ~ Species, data = iris)
+plot(..., type = "l")	線圖	
+plot(AirPassengers, type = "l")
+plot()	散佈圖	
+plot(cars)
+barplot()	長條圖	
+barplot(table(mtcars$cyl))
+curve()	曲線圖	
+curve(sin, from = 0, to = pi * 2)
+hist() 
+函數繪製直方圖來探索數值的分佈
+boxplot() 
+函數繪製盒鬚圖來探索不同類別與數值分佈的關係
+plot(..., type = "l")
+函數繪製線圖來探索數值與日期（時間）的關係
+curve()搭配from和to 可輸入我們指定的範圍
+EX. curve(sin,from=-pi,to=pi)
+加入格線 grid()
+加入標題 xlab,ylab
+輸出圖形：可點選export-save as image
