@@ -32,7 +32,7 @@ My name is 楊詠雯.
 [previewEDA](https://yongwen-yang.github.io/example//WEEK2/previewEDA.html)     
 # WEEK3
 課堂作業    
-
+1.了解Exploratory Data Analysis(EDA)     
 回家作業    
 
 # WEEK4
