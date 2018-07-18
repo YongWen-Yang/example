@@ -1,0 +1,297 @@
+電子元件
+維基百科，自由的百科全書
+跳至導覽跳至搜尋
+
+各種電路元件
+電子元件（electronic component），是電子電路中的基本元素，通常是個別封裝，並具有兩個或以上的引線或金屬接點。電子元件須相互連接以構成一個具有特定功能的電子電路，例如：放大器、無線電接收機、振盪器等，連接電子元件常見的方式之一是焊接到印刷電路板上。電子元件也許是單獨的封裝（電阻器、電容器、電感器、電晶體、二極體等），或是各種不同複雜度的群組，例如：積體電路（運算放大器、排阻、邏輯閘等）。
+
+目錄
+1	元件分類
+1.1	端子與連接器
+1.2	電線
+1.3	開關
+1.4	電阻
+1.5	保護裝置
+1.6	電容
+1.7	電磁感應裝置
+1.8	網路（Network）
+1.9	憶阻器（Memristor）
+1.10	壓電裝置、晶體諧振器
+1.11	電源
+1.12	感測器
+1.13	固態電子元件，半導體
+1.13.1	二極體
+1.13.2	電晶體
+1.13.3	積體電路
+1.13.4	混合式電路（英語：Hybrid circuit）
+1.14	顯示科技
+1.15	真空管
+1.16	組件、模組
+1.17	Prototyping aids
+1.18	機械配件
+1.19	其他
+2	標準縮寫
+3	參考文獻
+4	外部連結
+5	參見
+元件分類
+為了保持電子元件運作的穩定性，通常將它們以合成樹脂（Resin dispensing）包覆封裝，以提高絕緣與保護不受環境的影響。
+
+元件也許是被動或主動的（passive or active）：
+
+被動元件（Passive components）是一種電子元件，在使用時它們沒有任何的增益或方向性。[1]在電路分析（Network analysis）時，它們被稱為電力元件（Electrical elements）。
+主動元件（Active components）是一種電子元件，相對於被動元件所沒有的，在使用時它們有增益或方向性。它們包括了半導體器件與真空管。
+端子與連接器
+用於電路連接的裝置
+
+端子（Terminal）
+電子連接器（Connector）
+訊號插座（Socket）
+端子台（Screw terminal, Terminal Blocks）
+訊號接頭（Header）
+（Closed）
+電線
+有連介面或終端在盡頭的電線
+
+電源線（Power cord）
+軟線（Patch cord）
+示波器探棒（Test lead）
+開關
+能夠控制電路的開路或閉路的電子元件
+
+開關（Switch） - 手動操作的開關
+Keypad - 一群按鈕開關的集合（例如只能輸入數字的小鍵盤）
+繼電器（Relay） - 電流操作的開關。它是一種電磁元件，有別於固態繼電器（Solid State Relay）。
+電磁開關
+自動調溫器（Thermostat） - 溫度致動的開關
+斷路器（Circuit Break） - 過電流致動的開關
+限位開關（Limit Switch） - 機械式的啟動開關
+水銀開關（Mercury Switch）
+離心開關（Centrifugal Switch）
+電阻
+電阻類的電子元件
+
+參見下方「感測器」段落中的電阻，用於環境檢測
+參見下方「保護裝置」段落中的電阻，用於限制電流或電壓
+電阻器（Resistor）- 固定的電阻值
+電阻網絡（Resistor Network）
+微調器 - 小型可變電阻器
+可變電阻 - 可變的電阻值
+加熱器 - 電熱元件（Heating Element）
+電熱線（Resistance Wire） - 高電阻材質的線，近似於加熱元件
+熱敏電阻（Thermistor）- 溫度改變電阻值
+壓敏電阻（Varistor）- 變壓電阻
+保護裝置
+在過高的電壓或電流之中保護電路的被動元件
+
+雖然這些元件，在技術上屬於電線、電阻或真空管類，但根據它們的用途列於下方。
+主動元件，在半導體類中屬於執行保護功能，如下。
+保險絲（Fuse）- 過電流保護，只能使用一次。
+自恢復保險絲（PolySwitch, self-resetting fuse）- 過電流保護，可重設後重複使用
+金屬氧化物壓敏電阻、突波吸收器（MOV）- 過電壓保護，這些是被動元件，不像是TVS
+突波電流限制器（Inrush current limiter） - 避免突波電流（Inrush current）造成損壞
+氣體放電管（Gas Discharge Tube）
+斷路器（Circuit Breaker）- 過電流致動的開關
+積熱電驛（Thermal Realy）- 過電流致動的開關
+接地漏電保護插座（GFCI）或RCD
+電容
+在電場存儲的電荷的元件。 電容器在電路中用於過濾。 電容器通常會改變所通過的交流電壓，而不會改變恆定的直流電壓。
+
+電容器（Capacitor） - 固定的電容量
+電容電路（Capacitor network）
+可變電容器（Variable capacitor）- 能夠改變的電容量
+變容二極體（Varicap diode）- 能夠改變的電容量的二極體
+電磁感應裝置
+使用磁的電子元件
+
+電感元件（Inductor）
+可變電感器（Variable Inductor）
+變壓器（Transformer）
+電動機（Motor）／ 發電機（Generator）
+螺線管（Solenoid）
+揚聲器（Speaker）／ 麥克風（Microphone）
+網路（Network）
+使用多個或多種類型的被動元件組成的複合電路元件，英文稱為Network，但中文裡通常不使用網路這種稱呼。
+
+排阻或電阻排
+憶阻器（Memristor）
+憶阻器
+壓電裝置、晶體諧振器
+使用壓電效應的被動元件
+
+石英晶體諧振器（Crystal Oscillator）
+壓電電動機（Ultrasonic Motor）- 使用壓電效應的電動機
+電源
+電力來源
+
+電池（Battery）
+燃料電池（Fuel cell）- 使用燃料進行化學反應產生電力的裝置
+電源供應（Power supply）
+太陽能電池（Photo voltaic device）
+發電機（Electrical generator）
+感測器
+感測器（Sensor）
+揚聲器（Loudspeaker）
+加速度感測器（Accelerometer）
+Thermal
+熱電偶（Thermocouple），熱電堆（thermopile）
+熱敏電阻（Thermistor）
+電阻溫度計（Resistance Temperature Detector、RTD）
+輻射熱測量計（Bolometer）
+磁場（Magnetic field）
+濕度（Humidity）
+濕度計（Hygrometer）
+光敏電阻（Photo resistor）
+固態電子元件，半導體
+二極體
+這類的電子元件能夠控制電流方向是單向的。
+
+二極體（Diode），整流器（Rectifier），橋式整流器（Bridge Rectifier）
+蕭特基二極體（Schottky Diode）
+齊納二極體（Zener Diode）
+發光二極體（Light Emitting Diode、LED）
+雷射二極體（LASER Diode）
+光電二極體（Photodiode）
+太陽能電池（Solar cell）
+雪崩光電二極體（Avalanche Photodiode）
+定電流二極體（Constant Current Diode, Current Regulative Diode（CRD），或Current Limiting Diode）:外觀如同二極體，也有單向導通特性，但內部構造實際上是FET所接成。
+電晶體
+雙極性電晶體（Bipolar Junction Transistor、BJT）- NPN或PNP
+異質接面雙極性電晶體
+達靈頓電晶體（Darlington transistor）- NPN或PNP
+場效電晶體（Field effect transistor、FET）
+接面場效電晶體（Junction Field Effect Transistor、JFET） - N-通道或 P-通道
+金氧半場效電晶體（Metal Oxide Semiconductor FET、MOSFET） - N-通道或 P-通道
+金屬半導體場效應管（MESFET）
+高電子移動率電晶體（HEMT）
+晶閘管（Thyristor）
+單接合面電晶體（UJT, Unijunction transistor）
+可程式化單接合面電晶體（PUT, Programmable UniJunction Transistor）
+絕緣柵雙極電晶體（Insulated Gate Bipolar Transistor、IGBT）
+積體電路
+數位積體電路（Digital circuit）
+類比積體電路（Analog circuit）
+霍爾效應感測器（Hall effect sensor）
+混合式電路
+光電工程（Optoelectronics）
+光電耦合元件（Opto-isolator|Opto-Isolator, Opto-Coupler, Photo-Coupler）
+發光二極體顯示器（LED Display）- 七段顯示器（Seven-segment display）, 十六段顯示器（Sixteen-segment display）, 點陣式顯示器（Dot-matrix display）
+顯示科技
+現在:
+
+白熾燈（Filament lamp）
+真空螢光顯示器（Vacuum fluorescent display、VFD，preformed characters, 七段顯示器, starburst）
+陰極射線管（Cathode ray tube、CRT）（dot matrix scan （eg CRT顯示器）, radial scan （eg 雷達）, arbitrary scan （eg 示波器））（單色& 彩色）
+霓虹燈（Neon lamp）- 使用氖（Neon）
+電漿顯示器（Plasma display）
+過時:
+
+數碼管（Nixie Tube）
+幻眼管（Magic eye tube）
+真空管
+運作在真空中的主動元件
+
+二極真空管（Diode）
+三極真空管（Triode）
+四極真空管（Tetrode）
+五極真空管（Pentode）
+六極管（Hexode）
+五柵變頻管（Pentagrid Converter）
+八極管（Octode）
+Barretter
+小型抗震管（Nuvistor）
+小型電子管（Compactron）
+微波（Microwave）
+
+速電管
+磁電管
+光學（Optical）
+
+光電二極體（Photodiode）
+陰極射線管（Cathode ray tube、CRT）
+真空螢光顯示器（Vacuum fluorescent display、VFD）
+光電倍增管（Photomultiplier）
+X射線管（X-ray tube）
+組件、模組
+多個電子元件被組裝在一起，作為一個元件
+
+振盪器
+顯示設備
+液晶顯示器（LCD）
+頭戴式顯示器
+電子濾波器（Filter）
+天線（Antennas）
+偶極天線（Dipole antenna）
+雙錐形天線（Biconical antenna）
+八木天線（Yagi antenna）
+相控陣天線（Phased array）
+磁偶極天線（Magnetic dipole）
+拋物面反射器（Parabolic dish）
+喇叭天線（Feedhorn）
+Prototyping aids
+麵包板（Breadboard）
+機械配件
+散熱片（Heat sink）
+電風扇（Fan）
+其他
+印刷電路板（英語：Printed circuit board、縮寫：PCB）
+標準縮寫
+元件名稱的縮寫廣泛被應用於工業：
+
+AE, ANT:天線（antenna）
+B:電池（battery）
+BR:橋式整流器（bridge rectifier）
+C:電容器（capacitor）
+CRT:陰極射線管（cathode ray tube）
+D或CR:二極體（diode）
+DSP:數位訊號處理器（digital signal processor）
+F:保險絲（fuse）
+FET:場效電晶體（field effect transistor）
+GDT:氣體放電管（gas discharge tube）
+IC:積體電路（integrated circuit）
+J:跳線或跳接點（jumper）
+JFET:接面場效電晶體（junction gate field-effect transistor）
+L:電感（inductor）
+LCD:液晶顯示器（liquid crystal display）
+LDR:光敏電阻（light dependent resistor）
+LED:發光二極體（light emitting diode）
+LS:揚聲器（(loud) speaker）
+M:電動機、馬達（motor），電表（meter）
+MCB:斷路器（miniature circuit breaker）
+Mic:麥克風（microphone）
+MOSFET:金氧半場效電晶體（metal oxide semiconductor field effect transistor）
+Ne:霓虹燈、氖燈（neon lamp）
+OP, OPA:運算放大器（operational amplifier）
+PCB:印刷電路板（printed circuit board）
+Q:三極體（transistor）
+R:電阻器（resistor）
+RLA: RY:繼電器（relay）
+SCR:矽控整流器（silicon controlled rectifier）
+SW:開關（switch）
+T:變壓器（transformer）
+TFT:薄膜電晶體（thin film transistor (display)）
+TH:熱敏電阻（thermistor）
+TP:測試點（test point）
+Tr:三極體（transistor）
+U:積體電路（integrated circuit）
+V:真空管（valve (tube)）
+VC:可變電容器（variable capacitor）
+VFD:真空螢光顯示器（vacuum fluorescent display）
+VLSI:超大型積體電路（very large scale integration）
+VR:可變電阻（variable resistor）
+X:晶體振盪器，陶瓷諧振器（crystal, ceramic resonator）
+XMER:變壓器（transformer）
+XTAL:晶體振盪器（crystal）
+Z或ZD:積納二極體（Zener diode）
+參考文獻
+ Young EC, The Penguin Dictionary of Electronics, Penguin Books, 1988
+外部連結
+ 維基共享資源中有關電子元件的多媒體資源
+參見
+icon	電子學主題
+電路符號
+電路設計
+電路圖
+電力元件，或稱電氣元件
+電子元件的規格表（Datasheet）
+憶阻器
