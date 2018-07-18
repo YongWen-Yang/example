@@ -1,6 +1,7 @@
 # CS+X 資料科學與程式設計        
 My name is 楊詠雯.   
-台師大機電工程學系    
+台師大機電工程學系   
+    
 # WEEK1
 課堂作業    
 1.建立github帳號    
@@ -24,12 +25,14 @@ My name is 楊詠雯.
 [workPTT](https://yongwen-yang.github.io/example//WEEK2/workPTT.html)  
 回家作業     
 1.學習ggmap    
-2.PTT wordcloud practice       
+2.PTT wordcloud practice   
+3.preview EDA    
 [HW_map](https://yongwen-yang.github.io/example//WEEK2/HW_map.html)    
-[makeupPTT](https://yongwen-yang.github.io/example//WEEK2/makeupPTT.html)  
+[makeupPTT](https://yongwen-yang.github.io/example//WEEK2/makeupPTT.html)      
+[previewEDA](https://yongwen-yang.github.io/example//WEEK2/previewEDA.html)     
 # WEEK3
 課堂作業    
-
+1.了解Exploratory Data Analysis(EDA)     
 回家作業    
 
 # WEEK4
