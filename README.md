@@ -27,9 +27,9 @@ My name is 楊詠雯.
 1.學習ggmap    
 2.PTT wordcloud practice   
 3.preview EDA    
-[HW_map](https://yongwen-yang.github.io/example//WEEK2/HW_map.html)    
-[makeupPTT](https://yongwen-yang.github.io/example//WEEK2/makeupPTT.html)      
-[previewEDA](https://yongwen-yang.github.io/example//WEEK2/previewEDA.html)     
+[HW_map](https://yongwen-yang.github.io/example//WEEK3/HW_map.html)    
+[makeupPTT](https://yongwen-yang.github.io/example//WEEK3/makeupPTT.html)      
+[previewEDA](https://yongwen-yang.github.io/example//WEEK3/previewEDA.html)     
 # WEEK3
 課堂作業    
 1.了解Exploratory Data Analysis(EDA)    
