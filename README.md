@@ -32,7 +32,13 @@ My name is 楊詠雯.
 [previewEDA](https://yongwen-yang.github.io/example//WEEK2/previewEDA.html)     
 # WEEK3
 課堂作業    
-1.了解Exploratory Data Analysis(EDA)     
+1.了解Exploratory Data Analysis(EDA)    
+2.了解TFIDF     
+3.運用TFIDF做出PCA的新數據     
+4.做出K-means    
+[job_skills](https://yongwen-yang.github.io/example//WEEK3/job_skills.html)       
+[job_skills](https://yongwen-yang.github.io/example//WEEK3/job_skills.html)     
+[job_skills](https://yongwen-yang.github.io/example//WEEK3/job_skills.html)     
 回家作業    
 
 # WEEK4
