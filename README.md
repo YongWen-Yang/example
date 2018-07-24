@@ -36,10 +36,12 @@ My name is 楊詠雯.
 2.了解TFIDF     
 3.運用TFIDF做出PCA的新數據     
 4.做出K-means    
+回家作業    
+finish task3    
 EDA  [job_skills](https://yongwen-yang.github.io/example/WEEK3/job_skills.html)        
 [TFIDF](https://yongwen-yang.github.io/example/WEEK3/TFIDF.html)      
 [PCA+KMEAN](https://yongwen-yang.github.io/example/WEEK3/PCA+KMEAN.html)        
-回家作業    
+   
 
 # WEEK4
 課堂作業    
