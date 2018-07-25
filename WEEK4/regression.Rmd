@@ -21,7 +21,7 @@ str(data)
 ```{r}
 summary(data)
 ```
-#用math_hours和math_interest畫方盒圖
+#用science_hours和science_interest畫方盒圖
 ```{r}
 require(ggplot2)
 old <- theme_set(theme_bw())
@@ -128,5 +128,22 @@ ggplot(data = fit_m2, aes(x = science.interest, group = science.hours )) +
 ```
 
 
+# 看看殘差的 Q-Q 圖
+```{r}
+require(lattice)
+qqmath(~ scale(resid) | science.hours, data = fit_m2, type = c('p', 'g', 'r'),
+       xlab = '常態位數', ylab = '標準化殘差', layout = c(2, 3),
+       pch = '.', cex = 2)
+```
 
 
+# 畫預測值與殘差的散佈圖，檢查線性與等分散假設
+```{r}
+library(ggplot2)
+require(MASS)
+ggplot(data = fit_m2, aes(x = fitted, y = scale(resid), group = science.hours )) +
+  geom_point(pch = 20, size = 1) +
+  stat_smooth(method = 'rlm', se = F) +
+  facet_grid(science.hours ~ .) +
+  labs(x = '預測值', y = '標準化殘差')
+```
