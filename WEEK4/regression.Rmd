@@ -1,0 +1,132 @@
+---
+title: "TIMSS2011"
+author: "yongwen"
+date: "2018年7月25日"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+data <- read.table(file = "./TIMSS2011TW.txt", 
+                  header = TRUE)
+```
+#輸出data裡的資料
+```{r}
+str(data)
+```
+#基本統計這些資料
+```{r}
+summary(data)
+```
+#用math_hours和math_interest畫方盒圖
+```{r}
+require(ggplot2)
+old <- theme_set(theme_bw())
+```
+
+```{r}
+ggplot(data = data, aes(x = gender, y =science)) +
+ geom_boxplot() + coord_flip() +
+ labs( y = '科學', x = '性別', 
+       title = 'Math Box')
+```
+#算出95%信賴區間
+```{r}
+#以下函式計算95%信賴區間
+with(data, 
+     tapply(science, gender,
+     function(x) 
+       c(mean(x) + c(-2, 2) * sd(x)/sqrt(length(x)))))
+```
+#T_TEST 檢驗
+```{r}
+t.test(science ~ gender, data = data)
+```
+#觀察對科學的投入時間是否和對科學的興趣程度有關
+```{r}
+#先把對科學的投入時間欄位內各個時段順序定下來
+data$science.hours <- factor(data$science.hours, 
+                       levels = c('<= 45min',
+                                  '45min - 3hours', '>= 3hours'))
+
+#看不同科學投入時間下的對科學興趣程度的平均數
+tapply(data$science.interest, data$science.hours, mean)
+```
+```{r}
+library(Hmisc)
+ggplot(data = data, 
+       aes(x =science.hours, y = science.interest)) +
+  stat_summary(fun.data = 'mean_cl_boot', size = 1) +
+  scale_y_continuous(breaks = seq(5, 15, by = 1)) +
+  geom_hline(yintercept = mean(data$science.interest) , 
+             linetype = 'dotted') +
+  labs(x = '科學投入時間', y = '對科學的興趣程度') +
+  coord_flip()
+```
+# 推測對自然興趣程度可能是教育資源造成的
+```{r}
+anova(m1 <- lm(science.interest~ parental.education, data = data))
+```
+
+
+```{r}
+ggplot(data = data, 
+       aes(group = science.hours, 
+          y = science.interest, x = educational.resources)) +
+  geom_point() +
+  stat_smooth(method = 'lm', se = F) +
+  stat_smooth(aes(group = science.hours, 
+          y = science.interest, x = educational.resources), 
+          method = 'lm', se = F) + 
+  facet_grid( . ~  science.hours) +
+  labs(x = '教育資源', y = '對自然的興趣程度')
+```
+
+
+
+# 利用以下 ANOVA 檢驗假設是否正確
+```{r}
+anova(m2 <- update(m1, . ~ . + 
+            educational.resources, data = data))
+#或許不是對自然的投入時間而是教育資源造成
+anova(m3 <- update(m2, . ~ . - science.hours,  data = data))
+```
+
+# 將 ANOVA 圖表輸出
+```{r}
+res_lm <- lapply(list(m1, m2, m3), summary)
+
+(res_lm[[2]]$r.sq - res_lm[[3]]$r.sq)/res_lm[[2]]$r.sq
+anova(m3, m2)
+(res_lm[[2]]$r.sq - res_lm[[1]]$r.sq)/res_lm[[1]]$r.sq
+anova(m1, m2)
+```
+
+# 畫圖
+```{r}
+require(coefplot)
+m2 <- lm(science.interest ~ parental.education+educational.resources- 1, 
+         data = data)
+coefplot(m2, xlab = '估計值', ylab = '迴歸變項', title = '反應變項 = 對自然的興趣程度')
+
+```
+# 把資料與迴歸分析的預測值、殘差與影響度放進資料
+```{r}
+fit_m2 <- data.frame(data[, c(11, 8, 13)], fitted = fitted(m2), resid = resid(m2),
+                     infl = influence(m2)$hat )
+ggplot(data = fit_m2, aes(x = science.interest, group = science.hours )) +
+ stat_density(geom = 'path', position = 'identity') +
+ stat_density(geom = 'path', position = 'identity', aes(x = fitted)) +
+ geom_vline(xintercept = c(with(data, tapply(science.interest,science.hours, mean))), linetype = 'dotted')+
+ facet_grid(science.hours ~ .) +
+ scale_x_continuous(breaks = seq(5, 15, by = 1))+
+ labs(x = '對科學的興趣程度', y = '機率密度')
+
+```
+
+
+
+

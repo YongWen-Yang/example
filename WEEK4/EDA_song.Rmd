@@ -136,7 +136,7 @@ corrplot(mtCor, method = "ellipse", type = "upper", tl.srt = 45)
 
 ## Top songs的普遍特徵
 
-### ㄔ常用的音頻或曲調keys
+### 常用的音頻或曲調keys
 
 ```{r , echo=TRUE, message = FALSE}
 spotify_data$key <- as.character(spotify_data$key)
