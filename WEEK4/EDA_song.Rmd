@@ -1,0 +1,223 @@
+---
+title: "EDA_song"
+author: "yongwen"
+date: "2018年7月25日"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 介紹
+這些資料裡包含一些音軌的特徵    
+**Spotify's Top Songs of 2017**
+而我試著分析這些音樂背後的特徵
+
+# Read the Data
+
+```{r read, echo=TRUE, message=FALSE, warning=FALSE}
+
+library(readr)
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(formattable)
+library(wordcloud)
+library(tm)
+
+spotify_data <- read_csv('./featuresdf.csv')
+daily_spotify <- read_csv('./data.csv')
+```
+
+```{r structure, echo=TRUE, message=FALSE, warning=FALSE}
+glimpse(spotify_data)
+```
+
+```{r summary, echo=TRUE}
+summary(spotify_data)
+```
+```{r , echo=TRUE, message = FALSE}
+spotify_data$duration_ms <- round(spotify_data$duration_ms / 1000)
+colnames(spotify_data)[15] <- "duration"
+```
+# 資料分析
+
+## Artists dominating the Top List
+
+用來判定哪些歌手有超過一首歌進入前100名
+```{r , echo=TRUE, message = FALSE}
+top_artists <- spotify_data %>%
+    group_by(artists)  %>%
+    summarise(n_apperance = n()) %>%
+    filter(n_apperance > 1) %>%
+    arrange(desc(n_apperance))
+
+top_artists$artists <- factor(top_artists$artists, levels = top_artists$artists[order(top_artists$n_apperance)]) # in order to visualise the list in descending order 
+
+ggplot(top_artists, aes(x = artists, y = n_apperance)) +
+    geom_bar(stat = "identity",  fill = "tomato2", width = 0.6 ) + 
+    labs(title = "Top Artists of 2017", x = "Artists", y = "Number of Apperance on the Top 100") +
+    theme(plot.title = element_text(size=15,hjust=-.3,face = "bold"), axis.title = element_text(size=12)) +
+    geom_text(aes(label=n_apperance), hjust = 2, size = 3, color = 'white') +
+    coord_flip()
+```
+
+由此可知，Ed sheeran和The Chainsmokers 有四首不同的歌進入前100名的歌單，而Drake和Martin Garrix有三首不同的歌
+
+## 用播放次數排名歌手
+
+用spotify_data裡的duration 變數和daily spotify裡的steam變數來判定    
+
+```{r , echo=TRUE, message = FALSE}
+us_daily_spotify <- daily_spotify %>%
+    filter(Region == "us") %>%
+    group_by(`Track Name`) %>%
+    summarise(total_streams = sum(Streams))
+
+names(us_daily_spotify)[1] <- paste("name") # in order to make the joining easier
+
+top_by_playtime <- spotify_data %>%
+    left_join(us_daily_spotify, by = "name") %>%
+    select(name, artists, duration, total_streams) %>%
+    mutate(total_time = duration * total_streams / 60000) # in order to convert seconds into hours
+
+top20_by_playtime <-  top_by_playtime %>%
+    group_by(artists)  %>%
+    summarise(n_time = sum(total_time)) %>%
+    arrange(desc(n_time)) %>%
+    top_n(20)
+
+top20_by_playtime$artists <- factor(top20_by_playtime$artists, levels = top20_by_playtime$artists [order(top20_by_playtime$n_time)]) # in order to visualise the list in descending order
+
+ggplot(top20_by_playtime, aes(x=artists, y=n_time, color=artists)) +
+    geom_point(size=3) + 
+    geom_segment(aes(x=artists,xend=artists, y=0, yend=n_time)) +
+    labs(title = "Top Artists of 2017 in US by Playing time", x='',y='') +
+    theme_bw() +
+    theme(legend.position = 'none', plot.title = element_text(size=17,hjust = -0.7, face = "bold"), axis.title.y = element_text(face = "bold"), axis.title.x = element_text(angle = 120)) +
+    coord_flip()
+
+```
+
+
+現在Post Malone變成第二名了，我們用撥放次數之後Ed Sheeran依然是第一名，但Post Malone 和Kendrick Lamar和上一個資料分析方式比起來名次往前了
+
+###  Ed Sheeran's Songs 每天被播放幾次in 2017
+
+可以知道Ed Sheeran的每首歌曲每天被撥放幾次~非常有趣
+
+```{r , echo=TRUE, message = FALSE}
+ed_sheeran_daily <- daily_spotify %>%
+    filter(Region == "us", Artist == "Ed Sheeran", Position <= 100)
+
+formatted_ed <- ed_sheeran_daily %>%
+    group_by(`Track Name`) %>%
+    summarise(n_daily = n()) %>%
+    arrange(desc(n_daily))
+
+formattable(formatted_ed)
+```
+
+## 變數間的關聯
+
+運用 `corrplot` function 去作圖分析
+
+```{r , echo=TRUE, message = FALSE}
+
+library(corrplot)
+spotify_data_num <- spotify_data[,-(1:3)]
+mtCor <- cor(spotify_data_num)
+corrplot(mtCor, method = "ellipse", type = "upper", tl.srt = 45)
+```
+*energy和loudness呈現非常正相關
+*valence是正相關於danceability和energy
+*還有特別的是speechiness和loudness兩者呈現非常負相關
+
+## Top songs的普遍特徵
+
+### ㄔ常用的音頻或曲調keys
+
+```{r , echo=TRUE, message = FALSE}
+spotify_data$key <- as.character(spotify_data$key)
+spotify_data$key <- revalue(spotify_data$key, c("0" = "C", "1" = "C♯,D♭", "2" = "D", "3" = "D♯,E♭", "4" = "E", "5" =  "F", "6" = "F♯,G♭","7" = "G","8" = "G♯,A♭","9" = "A","10" = "A♯,B♭","11" = "B"))
+
+song_keys <- spotify_data %>%
+    group_by(key) %>%
+    summarise(n_key = n()) %>%
+    arrange(desc(n_key))
+
+song_keys$key <- factor(song_keys$key, levels = song_keys$key[order(song_keys$n_key)]) # in order to visualise the keys in descending order
+
+ggplot(song_keys, aes(x = reorder(key,-n_key), y = n_key, fill = reorder(key,-n_key))) +
+    geom_bar(stat = "identity") +
+    labs(title = "Distribution of the Keys of Top Songs", x = "Keys", y = "Count of Keys on the Top 100") +
+    geom_text(aes(label=n_key), position = position_stack(vjust = 0.8)) +
+    theme_bw() +
+    theme(plot.title = element_text(size=15,face = "bold"), axis.title = element_text(size=12)) +
+    theme(legend.position="none")
+```
+
+由此可知常用的曲調是 **C♯,D♭**; 反之最不常用的是**D♯,E♭** 
+
+### Density Plots of Correlated Variables
+
+我們已經知道 `energy`,`valence` and `danceability` 呈現正相關; 但我們還想知道這些變數呈現多少在於我們前100名首歌之中
+
+```{r , echo=TRUE, message = FALSE}
+
+correlated_density <- ggplot(spotify_data) +
+    geom_density(aes(energy, fill ="energy", alpha = 0.1)) + 
+    geom_density(aes(valence, fill ="valence", alpha = 0.1)) + 
+    geom_density(aes(danceability, fill ="danceability", alpha = 0.1)) + 
+    scale_x_continuous(name = "Energy, Valence and Danceability") +
+    scale_y_continuous(name = "Density") +
+    ggtitle("Density plot of Energy, Valence and Danceability") +
+    theme_bw() +
+    theme(plot.title = element_text(size = 14, face = "bold"),
+          text = element_text(size = 12)) +
+    theme(legend.title=element_blank()) +
+    scale_fill_brewer(palette="Accent")
+
+correlated_density
+```
+
+這些變數被限制在(0,1)之中，呈現正相關
+
+#我推測danceability大小可能是loudness大小造成的，畫圖看看
+```{r}
+anova(m1 <- lm(energy ~ loudness, data = spotify_data))
+
+```
+```{r}
+ggplot(data =spotify_data, 
+       aes(group = loudness, 
+          y = energy, x = danceability)) +
+  geom_point() +
+  stat_smooth(method = 'lm', se = F) +
+  stat_smooth(aes(group = loudness, 
+          y = energy, x = danceability), 
+          method = 'lm', se = F) + 
+  facet_grid( . ~  loudness) +
+  labs(x = '想跳舞力', y = '能量')
+```
+#利用以下 ANOVA 檢驗假設是否正確
+
+#把想跳舞力加進模型
+```{r}
+anova(m2 <- update(m1, . ~ . + 
+            danceability, data =spotify_data))
+```
+
+```{r}
+anova(m3 <- update(m2, . ~ . -loudness ,  data =spotify_data))
+```
+#將 ANOVA 結果做成圖表輸出，先計算一些需要的數據
+```{r}
+#將結果放在一個list中
+res_lm <- lapply(list(m1, m2, m3), summary)
+#比較在控制教育資源下，父母教育的效果
+(res_lm[[2]]$r.sq - res_lm[[3]]$r.sq)/res_lm[[2]]$r.sq
+anova(m3, m2)
+
+```
