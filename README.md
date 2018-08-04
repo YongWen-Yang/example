@@ -55,7 +55,7 @@ finish task4
 review T-Test/ANOVA/regression    
       
 EDA深入做ANOVA=>[EDA_song](https://yongwen-yang.github.io/example/WEEK4/EDA_song.html)    
- 用TIMSS2011的data做T-Test/ANOVA/regression [regression](https://yongwen-yang.github.io/example/WEEK4/regression.html)
+ 用TIMSS2011的data做T-Test/ANOVA/regression [regression](https://yongwen-yang.github.io/example/WEEK4/regression.html)     
 [final_report_music](https://yongwen-yang.github.io/example/WEEK6/final_report_music.html)
 # WEEK5
 課堂作業    
