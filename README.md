@@ -49,9 +49,13 @@ EDA  [job_skills](https://yongwen-yang.github.io/example/WEEK3/job_skills.html)
 課堂作業    
 1.敘述統計/機率分布/假設檢定/迴歸分析    
 2.T-Test：兩樣本平均是否有顯著差異/ANOVA：連續性與類別型資料型態的關係     
-3.迴歸分析：用結果去找變因     
+3.迴歸分析：用結果去找變因    
+回家作業   
+finish task4    
+review T-Test/ANOVA/regression    
+      
 EDA深入做ANOVA=>[EDA_song](https://yongwen-yang.github.io/example/WEEK4/EDA_song.html)    
-回家作業    
+ 用TIMSS2011的data做T-Test/ANOVA/regression [regression](https://yongwen-yang.github.io/example/WEEK4/regression.html)
 
 # WEEK5
 課堂作業    
