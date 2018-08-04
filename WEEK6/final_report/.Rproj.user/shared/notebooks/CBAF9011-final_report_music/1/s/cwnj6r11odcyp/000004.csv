@@ -1,0 +1,6 @@
+"0","tempo1 <- group_by(spotify_data, tempoc ,tlabel )"
+"0","tempo2 <- dplyr::summarise(tempo1,  count=n())"
+"0","tempo2 <- arrange(tempo2, desc(count))"
+"0","tempop1<- ggplot(data=tempo2, aes(x=reorder(tempoc,count), y=count))+geom_bar(aes(y=count),stat=""identity"", alpha=0.8,fill=""skyblue"" )+ ylab(""Count"")+ xlab(""Tempo Type"")+ggtitle(""What is the most popular Tempo type? "")+"
+"0","  geom_text(aes(label=tlabel), vjust=1, color=""maroon"", size=3.5)+ theme_minimal()"
+"0","tempop1"

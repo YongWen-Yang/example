@@ -1,0 +1,7 @@
+"0","# Key signature count"
+"0","keys1 <- group_by(spotify_data, keysign )"
+"0","keys2 <- dplyr::summarise(keys1,  count=n())"
+"0","keys2 <- arrange(keys2, desc(count))"
+"0","# key signiature treemap"
+"0","treemap(keys2, index=""keysign"", vSize=""count"", type=""index"", "
+"0","        palette=""Pastel2"", title=""Top 100 Key Signature"", fontsize.title=12)"

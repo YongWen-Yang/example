@@ -1,0 +1,5 @@
+"0","keystone1 <- group_by(spotify_data, keysign, keys )"
+"0","keystone2 <- dplyr::summarise(keystone1,  count=n())"
+"0","keystone2 <- arrange(keystone2, desc(count))"
+"0","keysp1<- ggplot(data=keystone2, aes(x=reorder(keysign,count), y=count))+geom_bar(aes(y=count, fill=keys),stat=""identity"", alpha=0.8 )+ ylab(""Value"")+ xlab(""Variables to a song"")+coord_flip()+ggtitle(""Key signature and Emotion"")"
+"0","keysp1"

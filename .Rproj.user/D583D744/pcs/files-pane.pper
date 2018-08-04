@@ -1,0 +1,9 @@
+{
+    "path" : "~/GitHub/example",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}

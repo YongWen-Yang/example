@@ -1,0 +1,6 @@
+"0","eorig <- group_by(spotify_data, tempoc , keys)"
+"0","eorig1 <- summarise(eorig,  count=n() ,rate= mean(energy))"
+"0"," ggplot(eorig1, aes(x=tempoc, y=keys, fill = rate)) + "
+"0","    geom_tile(colour = ""white"")  +"
+"0","    scale_fill_gradient(low=""yellow"", high=""red"") +"
+"0","    labs(x=""Tempo"", y=NULL, title=""Heatmap of Engery"" ,fill=""Engery"")"

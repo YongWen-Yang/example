@@ -1,0 +1,23 @@
+"0","spotify_data$key <- as.character(spotify_data$key)"
+"2","Warning message:
+"
+"2","In strsplit(code, ""\n"", fixed = TRUE) :"
+"2","
+ "
+"2"," input string 1 is invalid in this locale
+"
+"0","spotify_data$key <- revalue(spotify_data$key, c(""0"" = ""C"", ""1"" = ""C♯,D♭"", ""2"" = ""D"", ""3"" = ""D♯,E♭"", ""4"" = ""E"", ""5"" =  ""F"", ""6"" = ""F♯,G♭"",""7"" = ""G"",""8"" = ""G♯,A♭"",""9"" = ""A"",""10"" = ""A♯,B♭"",""11"" = ""B""))"
+"2","The following `from` values were not present in `x`: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+"
+"0","song_keys <- spotify_data %>%"
+"0","    group_by(key) %>%"
+"0","    summarise(n_key = n()) %>%"
+"0","    arrange(desc(n_key))"
+"0","song_keys$key <- factor(song_keys$key, levels = song_keys$key[order(song_keys$n_key)]) # in order to visualise the keys in descending order"
+"0","ggplot(song_keys, aes(x = reorder(key,-n_key), y = n_key, fill = reorder(key,-n_key))) +"
+"0","    geom_bar(stat = ""identity"") +"
+"0","    labs(title = ""Distribution of the Keys of Top Songs"", x = ""Keys"", y = ""Count of Keys on the Top 100"") +"
+"0","    geom_text(aes(label=n_key), position = position_stack(vjust = 0.8)) +"
+"0","    theme_bw() +"
+"0","    theme(plot.title = element_text(size=15,face = ""bold""), axis.title = element_text(size=12)) +"
+"0","    theme(legend.position=""none"")"

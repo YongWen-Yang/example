@@ -1,0 +1,6 @@
+"0","tone1 <- group_by(spotify_data, keylabel )"
+"0","tone2 <- dplyr::summarise(tone1,  count=n())"
+"0","tone2 <- arrange(tone2, desc(count))"
+"0","# Tonality treemap"
+"0","treemap(tone2, index=""keylabel"", vSize=""count"", type=""index"", "
+"0","        palette=""Pastel2"", title=""Top 100 Songs Key charactersics and Emotion"", fontsize.title=12)"

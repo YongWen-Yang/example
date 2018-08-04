@@ -1,0 +1,12 @@
+name: final_report
+title: final_report
+username:
+account: yongwen880731
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 393016
+bundleId: 1510974
+url: https://yongwen880731.shinyapps.io/final_report/
+when: 1533102670.2225
+asMultiple: FALSE
+asStatic: FALSE

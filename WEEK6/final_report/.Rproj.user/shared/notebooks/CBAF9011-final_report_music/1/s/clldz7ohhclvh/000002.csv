@@ -1,0 +1,7 @@
+"0","spotify_data$danceability<- spotify_data$danceability*100"
+"0","spotify_data$energy<- spotify_data$energy*100"
+"0","spotify_data$speechiness<- spotify_data$speechiness*100"
+"0","spotify_data$acousticness<- spotify_data$acousticness*100"
+"0","spotify_data$instrumentalness<- spotify_data$instrumentalness*100"
+"0","spotify_data$liveness<- spotify_data$liveness*100"
+"0","spotify_data$valence<- spotify_data$valence*100"

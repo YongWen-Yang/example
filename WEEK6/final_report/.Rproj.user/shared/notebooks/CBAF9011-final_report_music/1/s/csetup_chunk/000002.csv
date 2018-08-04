@@ -1,0 +1,8 @@
+"0","knitr::opts_chunk$set(echo = TRUE)"
+"0","library(treemap)"
+"0","library(fmsb)"
+"0","library(reshape)"
+"0","library(MASS)"
+"0","library(vcd)"
+"0","library(SnowballC)"
+"0","library(RColorBrewer)"

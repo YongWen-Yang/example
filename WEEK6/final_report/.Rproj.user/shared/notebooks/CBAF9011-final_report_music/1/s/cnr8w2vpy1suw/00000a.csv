@@ -1,0 +1,6 @@
+"0","# major vs Minor"
+"0","major <- group_by(spotify_data, tone )"
+"0","major2 <- dplyr::summarise(major,  count=n())"
+"0","# Major treemap"
+"0","treemap(major2, index=""tone"", vSize=""count"", type=""index"", "
+"0","        palette=""Pastel1"", title=""Top 100 Songs Major"", fontsize.title=12)"

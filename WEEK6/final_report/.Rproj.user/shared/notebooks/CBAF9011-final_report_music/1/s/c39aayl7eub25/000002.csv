@@ -1,0 +1,7 @@
+"0","ed_sheeran_daily <- daily_spotify %>%"
+"0","    filter(Region == ""us"", Artist == ""Ed Sheeran"", Position <= 100)"
+"0","formatted_ed <- ed_sheeran_daily %>%"
+"0","    group_by(`Track Name`) %>%"
+"0","    summarise(n_daily = n()) %>%"
+"0","    arrange(desc(n_daily))"
+"0","formattable(formatted_ed)"

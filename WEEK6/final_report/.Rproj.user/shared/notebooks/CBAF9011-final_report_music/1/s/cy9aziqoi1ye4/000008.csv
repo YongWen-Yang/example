@@ -1,0 +1,3 @@
+"0","spotify_data$id1=seq(1, nrow(spotify_data))"
+"0","plot1 <- ggplot(spotify_data, aes(x=reorder(id1,tempo),y=tempo)) +geom_bar(stat = ""identity"", col = ""pink"", fill = ""pink"")+theme_minimal()"
+"0","plot1"

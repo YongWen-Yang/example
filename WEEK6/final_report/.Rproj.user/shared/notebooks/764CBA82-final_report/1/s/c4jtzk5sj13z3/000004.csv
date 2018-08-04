@@ -1,0 +1,7 @@
+"0","top_artists <- spotify_data %>%"
+"0","    group_by(artists)  %>%"
+"0","    summarise(n_apperance = n()) %>%"
+"0","    filter(n_apperance > 1) %>%"
+"0","    arrange(desc(n_apperance))"
+"2","Error: This function should not be called directly
+"

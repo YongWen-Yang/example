@@ -1,0 +1,644 @@
+---
+title: "fianl_report_music"
+author: "yongwen"
+date: "2018年8月1日"
+output: html_document
+---
+
+```{r , include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# 介紹
+這些資料裡包含一些音軌的特徵    
+**Spotify's Top Songs of 2017**
+而我試著分析這些音樂背後的特徵
+
+# Read the Data
+
+```{r read, echo=TRUE, message=FALSE, warning=FALSE}
+library(readr)
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(formattable)
+library(wordcloud)
+library(tm)
+library(tidyverse)
+daily_spotify <- read_csv('./data.csv')
+spotify_data <- read.csv('featuresdf.csv')
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(treemap)
+library(fmsb)
+library(reshape)
+library(MASS)
+library(vcd)
+library(SnowballC)
+library(RColorBrewer)
+```
+
+```{r structure, echo=TRUE, message=FALSE, warning=FALSE}
+glimpse(spotify_data)
+```
+
+```{r summary, echo=TRUE}
+summary(spotify_data)
+```
+```{r , echo=TRUE, message = FALSE}
+spotify_data$duration_ms <- round(spotify_data$duration_ms / 1000)
+colnames(spotify_data)[15] <- "duration"
+```
+# 資料分析
+
+## Artists dominating the Top List
+
+用來判定哪些歌手有超過一首歌進入前100名
+```{r}
+top_artists <- spotify_data %>%
+    group_by(artists)  %>%
+    summarise(n_apperance = n()) %>%
+    filter(n_apperance > 1) %>%
+    arrange(desc(n_apperance))
+
+top_artists$artists <- factor(top_artists$artists, levels = top_artists$artists[order(top_artists$n_apperance)]) # in order to visualise the list in descending order 
+
+ggplot(top_artists, aes(x = artists, y = n_apperance)) +
+    geom_bar(stat = "identity",  fill = "tomato2", width = 0.6 ) + 
+    labs(title = "Top Artists of 2017", x = "Artists", y = "Number of Apperance on the Top 100") +
+    theme(plot.title = element_text(size=15,hjust=-.3,face = "bold"), axis.title = element_text(size=12)) +
+    geom_text(aes(label=n_apperance), hjust = 2, size = 3, color = 'white') +
+    coord_flip()
+```
+
+由此可知，Ed sheeran和The Chainsmokers 有四首不同的歌進入前100名的歌單，而Drake和Martin Garrix有三首不同的歌
+
+
+###  Ed Sheeran's Songs 每天被播放幾次in 2017
+
+可以知道Ed Sheeran的每首歌曲每天被撥放幾次~非常有趣
+
+```{r , echo=TRUE, message = FALSE}
+ed_sheeran_daily <- daily_spotify %>%
+    filter(Region == "us", Artist == "Ed Sheeran", Position <= 100)
+
+formatted_ed <- ed_sheeran_daily %>%
+    group_by(`Track Name`) %>%
+    summarise(n_daily = n()) %>%
+    arrange(desc(n_daily))
+
+formattable(formatted_ed)
+```
+
+## 變數間的關聯
+
+運用 `corrplot` function 去作圖分析
+
+```{r , echo=TRUE, message = FALSE}
+
+library(corrplot)
+spotify_data_num <- spotify_data[,-(1:3)]
+mtCor <- cor(spotify_data_num)
+corrplot(mtCor, method = "ellipse", type = "upper", tl.srt = 45)
+```
+*energy和loudness呈現非常正相關
+*valence是正相關於danceability和energy
+*還有特別的是speechiness和loudness兩者呈現非常負相關
+
+## Top songs的普遍特徵
+
+### 常用的音頻或曲調keys
+
+```{r , echo=TRUE, message = FALSE}
+spotify_data$key <- as.character(spotify_data$key)
+spotify_data$key <- revalue(spotify_data$key, c("0" = "C", "1" = "C♯,D♭", "2" = "D", "3" = "D♯,E♭", "4" = "E", "5" =  "F", "6" = "F♯,G♭","7" = "G","8" = "G♯,A♭","9" = "A","10" = "A♯,B♭","11" = "B"))
+
+song_keys <- spotify_data %>%
+    group_by(key) %>%
+    summarise(n_key = n()) %>%
+    arrange(desc(n_key))
+
+song_keys$key <- factor(song_keys$key, levels = song_keys$key[order(song_keys$n_key)]) # in order to visualise the keys in descending order
+
+ggplot(song_keys, aes(x = reorder(key,-n_key), y = n_key, fill = reorder(key,-n_key))) +
+    geom_bar(stat = "identity") +
+    labs(title = "Distribution of the Keys of Top Songs", x = "Keys", y = "Count of Keys on the Top 100") +
+    geom_text(aes(label=n_key), position = position_stack(vjust = 0.8)) +
+    theme_bw() +
+    theme(plot.title = element_text(size=15,face = "bold"), axis.title = element_text(size=12)) +
+    theme(legend.position="none")
+```
+
+由此可知常用的曲調是 **C♯,D♭**; 反之最不常用的是**D♯,E♭** 
+
+### Density Plots of Correlated Variables
+
+我們已經知道 `energy`,`valence` and `danceability` 呈現正相關; 但我們還想知道這些變數呈現多少在於我們前100名首歌之中
+
+```{r , echo=TRUE, message = FALSE}
+
+correlated_density <- ggplot(spotify_data) +
+    geom_density(aes(energy, fill ="energy", alpha = 0.1)) + 
+    geom_density(aes(valence, fill ="valence", alpha = 0.1)) + 
+    geom_density(aes(danceability, fill ="danceability", alpha = 0.1)) + 
+    scale_x_continuous(name = "Energy, Valence and Danceability") +
+    scale_y_continuous(name = "Density") +
+    ggtitle("Density plot of Energy, Valence and Danceability") +
+    theme_bw() +
+    theme(plot.title = element_text(size = 14, face = "bold"),
+          text = element_text(size = 12)) +
+    theme(legend.title=element_blank()) +
+    scale_fill_brewer(palette="Accent")
+
+correlated_density
+```
+
+這些變數被限制在(0,1)之中，呈現正相關
+
+#介紹
+The Top Spotify Tracks of 2017 dataset contains 100 the most popular songs, we will try to analyze the data see if we can find out what are the secret ingradients(Tempo, Keys, name) to make a song popular.
+
+Danceability describes how suitable a track is for dancing,0.0 is least danceable and 1.0 is most danceable.
+
+Energy is a measure from 0.0 to 1.0 and represents a perceptual measure of intensity and activity.
+
+Speechiness detects the presence of spoken words in a track. Values above 0.66 describe tracks that are probably made entirely of spoken words.
+
+acousticness :A confidence measure from 0.0 to 1.0 of whether the track is acoustic
+
+liveness: Higher liveness values represent an increased probability that the track was performed live.
+
+valence: A measure from 0.0 to 1.0 describing the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric),
+```{r}
+spotify_data <- read.csv('featuresdf.csv')
+spotify_data$danceability<- spotify_data$danceability*100
+spotify_data$energy<- spotify_data$energy*100
+spotify_data$speechiness<- spotify_data$speechiness*100
+spotify_data$acousticness<- spotify_data$acousticness*100
+spotify_data$instrumentalness<- spotify_data$instrumentalness*100
+spotify_data$liveness<- spotify_data$liveness*100
+spotify_data$valence<- spotify_data$valence*100
+```
+
+### Data preparation 
+* Key :The key the track is in.
+Integers map to pitches using standard Pitch Class notation. E.g. 0 = C, 1 = C sharp/D flat, 2 = D, and so on.
+* Mode : Major is represented by 1 and minor is 0.
+
+Key Characterstics and Mood
+
+* C major :Innocently Happy
+* C minor :Innocently Sad, Love-Sick
+* C sharp minor : Despair, Wailing, Weeping
+* C sharp major: fullness, sonorousness, euphony
+* D major: Triumphant, Victorious War-Cries
+* D minor: Serious, Pious, Ruminating
+* D sharp minor: Deep Distress, Existential Angst
+* D sharp major: Cruel, Hard, Yet Full of Devotion
+* E major: Quarrelsome, Boisterous, Incomplete Pleasure
+* E minor: Effeminate, Amorous, Restless
+* F major: Complaisance and calm
+* E sharp minor: Obscure, Plaintive, Funereal
+* F sharp major : Conquering Difficulties, Sighs of Relief
+* F sharp minor: Gloomy, Passionate Resentment
+* G major: Serious, Magnificent, Fantasy
+* G minor: Discontent, Uneasiness
+* G sharp major : Death, Eternity, Judgement
+* G sharp minor : Grumbling, Moaning, Wailing
+* A major : Joyful, Pastoral, Declaration of Love
+* A minor : Tender, Plaintive, Pious
+* A sharp major: Joyful, Quaint, Cheerful
+* Bflat minor : Terrible, the Night, Mocking
+* B major: Harsh, Strong, Wild, Rage
+* B minor: Solitary, Melancholic, Patience
+
+```{r}
+spotify_data$tone <- ifelse(spotify_data$mode==0, "minor", "major")
+
+spotify_data$scale <-ifelse (spotify_data$key==0, "C",
+                      ifelse(spotify_data$key==1, "C#",
+                             ifelse(spotify_data$key==2, "D",
+                               ifelse(spotify_data$key==3,"D#" ,
+                                      ifelse(spotify_data$key==4, "E",
+                                             ifelse(spotify_data$key==5, "E#",
+                                                    ifelse(spotify_data$key==6,"F",
+                                                           ifelse(spotify_data$key==7, "F#",
+                                                                  ifelse(spotify_data$key==8, "G",
+                                                                         ifelse(spotify_data$key==9,"G#",
+                                                                                ifelse(spotify_data$key==10,"A",
+                                                                                       "A#"))))))))))) 
+
+
+spotify_data$keys <- paste(spotify_data$scale, spotify_data$tone, sep= " ")
+
+spotify_data$keysign <- ifelse (spotify_data$keys %in% c("C major","A minor" ), "Original",
+                         ifelse(spotify_data$keys %in% c("G major","E minor","D# minor" ), "F sharp",
+                          ifelse(spotify_data$keys %in% c("D major","B minor" ), "F,C Sharp",
+                            ifelse(spotify_data$keys %in% c("A major","F# minor" ), "F,C,G Sharp",    
+                            ifelse(spotify_data$keys %in% c("E major","C# minor" ), "F,A,G,D Sharp",
+                            ifelse(spotify_data$keys %in% c("B major","G# minor" ), "F,C,G,D,A Sharp",
+                            ifelse(spotify_data$keys %in% c("F# major","G# minor" ), "F,A,C,G,D,A,E Sharp",
+                             ifelse(spotify_data$keys %in% c("C# major","A# minor" ), "F,A,C,G,D,A,E,B Sharp",
+                             ifelse(spotify_data$keys %in% c("F major","D minor","E# major" ), "B Flat",
+                              ifelse(spotify_data$keys %in% c("G minor", "A# major" ), "B,E Flat",
+                               ifelse(spotify_data$keys %in% c("C minor","D# major"), "B,E, A Flat",
+                               ifelse(spotify_data$keys %in% c("F minor","G# major","E# minor" ), "B,A,D,E Flat",
+                              "Unknown"))))))))))))
+
+
+spotify_data$keylabel <- ifelse(spotify_data$keys== "C major",  "C major :Innocently Happy", 
+                  ifelse (spotify_data$keys=="C minor", "C minor :Innocently Sad, Love-Sick",
+                  ifelse(spotify_data$keys=="C# minor" , "C sharp minor : Despair, Wailing, Weeping", 
+                   ifelse(spotify_data$keys=="C# major","C sharp major: Fullness, Sonorousness, Euphony",
+                  ifelse(spotify_data$keys=="D major", "D major: Triumphant, Victorious War-Cries",
+                  ifelse(spotify_data$keys=="D minor", "D minor: Serious, Pious, Ruminating",
+                   ifelse(spotify_data$keys=="D# minor", "D sharp minor: Deep Distress, Existential Angst",
+                   ifelse(spotify_data$keys=="D# major", "Cruel, Hard, Yet Full of Devotion",
+                   ifelse(spotify_data$keys=="E major", "E major: Quarrelsome, Boisterous, Incomplete Pleasure",
+                    ifelse(spotify_data$keys=="E minor", "E minor: Effeminate, Amorous, Restless",
+                    ifelse(spotify_data$keys %in% c("E# major" ,"F major"), "F major: Complaisance and calm",
+                    ifelse(spotify_data$keys %in% c("F minor", "E# minor"),  "F minor: Obscure, Plaintive, Funereal",
+                    ifelse(spotify_data$keys=="F# major", "F sharp major : Conquering Difficulties, Sighs of Relief",
+                    ifelse(spotify_data$keys=="F# minor", "F sharp minor: Gloomy, Passionate Resentment",
+                    ifelse(spotify_data$keys=="G major", "G major: Serious, Magnificent, Fantasy",
+                    ifelse(spotify_data$keys=="G minor", "G minor: Discontent, Uneasiness",
+                    ifelse(spotify_data$keys=="G# major", "G sharp major : Death, Eternity, Judgement",
+                    ifelse(spotify_data$keys=="G# minor", "G sharp minor: Grumbling, Moaning, Wailing",
+                    ifelse(spotify_data$keys=="A major", "A major : Joyful, Pastoral, Declaration of Love",
+                    ifelse(spotify_data$keys=="A minor", "A minor : Tender, Plaintive, Pious",
+                    ifelse (spotify_data$keys=="A# major", "A sharp major: Joyful, Quaint, Cheerful",
+                    ifelse(spotify_data$keys=="A# minor", "A sharp minor: Terrible, the Night, Mocking",
+                           "Unknown")  )))))))      )))       )))))))))))
+
+
+
+# tempo classification
+spotify_data$tempoc[spotify_data$tempo >= 66 & spotify_data$tempo <76] <- "Adagio" 
+spotify_data$tempoc[spotify_data$tempo >=  76 & spotify_data$tempo <108] <- "Andante" 
+spotify_data$tempoc[spotify_data$tempo >= 108 & spotify_data$tempo <120] <- "Moderato" 
+spotify_data$tempoc[spotify_data$tempo >= 120 &spotify_data$tempo <156 ] <- "Allegro" 
+spotify_data$tempoc[spotify_data$tempo >= 156 & spotify_data$tempo <176] <- "Vivace" 
+spotify_data$tempoc[spotify_data$tempo >= 176 ] <- "Presto" 
+
+
+spotify_data$tlabel[spotify_data$tempo >= 66 & spotify_data$tempo <76] <-" 66- 76"
+spotify_data$tlabel[spotify_data$tempo >=  76 & spotify_data$tempo <108] <- "76-108" 
+spotify_data$tlabel[spotify_data$tempo >= 108 & spotify_data$tempo <120] <- "108- 120" 
+spotify_data$tlabel[spotify_data$tempo >= 120 & spotify_data$tempo <156 ] <- "120 -156" 
+spotify_data$tlabel[spotify_data$tempo >= 156 & spotify_data$tempo <176] <- "156-176" 
+spotify_data$tlabel[spotify_data$tempo >= 176 ] <- "> 176" 
+
+```
+
+# Analysis on 100 Top song tracks 
+## Most Popular Songs
+First, we look the Top 5 songs, we can see they all demonstrated high level of danceability, valence, energy. In general, People like happy, positive and enviograted feelings. Then we show the artists has most songs.
+
+ Then we show the artists has most songs. We group the artists with 1, 2, 3 or 4 song on the billboard.  Then we run a comparison to see what are the differences of the average score of different aspects of a song. As we can see the average scores, dispite how many songs an artists has in top 100, they all tends to focus more on the energy, danceability, and valences of a song. Personally, I think it is quite interesting, because in Chinese music Speechiness or lyrics is a very important index for a popular song.
+
+```{r}
+# Top 5 Songs
+m5 <- spotify_data[c(1:5),]
+m5<- m5[, c(1,3,4,8,9,11,12)] 
+m5<- as.data.frame(m5)
+m5.long <- melt(m5, id.vars="name")
+
+mp1<- ggplot(data=m5.long, aes(x=variable, y=value))+geom_bar(aes(y=value, fill=name),stat="identity", alpha=0.8 , position="dodge")+ ylab("Value")+ xlab("Variables to a song")+coord_flip()+ggtitle("Top 5 songs in Spotify 2017 ")
+mp1
+```
+
+```{r}
+
+# Top artists
+a1 <- group_by(spotify_data, artists )
+a2 <- dplyr::summarise(a1,  count=n())
+a2 <- arrange(a2, desc(count))
+a3 <- filter(a2, count>1)
+
+# Graph the artists have more than 2 songs
+ap1 <- ggplot(a3, aes(x=reorder(artists,count),y=count))+
+  geom_bar(aes(y=count,fill=artists), stat="identity")+
+  labs(x="Artists", y="Number of Songs",
+       title="Artists Has more than 2 Songs")+ theme(legend.position="none", axis.text.x = element_text(angle = 60, hjust = 1)) 
+ap1
+```
+
+```{r}
+# the differences between 1,2,3,4 song artisits
+a4<- merge (spotify_data, a2, x.by=artists)
+a5 <- group_by(a4, count)
+a6 <- summarise(a5, 
+                   dance= mean(danceability), energy=mean(energy),  speech=mean(speechiness),acous= mean(acousticness) , live=mean(liveness) ,alence=mean(valence))
+
+# reshape it to the long format
+a66<- as.data.frame(a6)
+a66.long <- melt(a66, id.vars="count")
+a66.long <- a66.long[with(a66.long, order(variable)),]
+
+
+
+#circle bar plot
+mdata1 <- a66.long
+mdata1$id=seq(1, nrow(mdata1))
+mlabel_data1=mdata1
+mnumber_of_bar1=nrow(mlabel_data1)
+angle1m= 90 - 360 * (mlabel_data1$id-0.5) /mnumber_of_bar1 
+mlabel_data1$hjust<-ifelse( angle1m < -90, 1, 0)
+mlabel_data1$angle<-ifelse(angle1m < -90, angle1m+180, angle1m)
+
+mp <- ggplot(mdata1, aes(x=as.factor(id), y=value, fill=variable))+geom_bar(stat="identity", alpha=0.8) + ylim(-50,120)+theme_minimal()+theme(
+    axis.text = element_blank(),
+    panel.grid = element_blank(),
+    plot.margin = unit(rep(-1,6), "cm")  ) +
+  coord_polar()+
+  geom_text(data=mlabel_data1, aes(x=id, y=value+10, label=count, hjust=hjust), color="black", fontface="bold",alpha=0.6, size=3, angle= mlabel_data1$angle, inherit.aes = FALSE ) + ggtitle("d") 
+ 
+mp
+```
+
+## Individual Player analysis {.tabset .tabset-fade .tabset-pills}
+
+We will see the radarchart of artists who has more then two songs. 
+
+###  Ed sheeran
+
+Ed sheeran demonstrated a substantial diversity abilities in his songs. Especially Shape Of You, the tension is presented in various aspects.
+
+```{r }
+tsong1 <- filter(spotify_data, artists %in% c("Ed Sheeran"))
+tsong2<-  tsong1[,c(1,3,4,8,9,11,12)] 
+
+
+# radar chart
+rownames(tsong2)=tsong2$name
+tsong3 <- tsong2[,  c(2,3,4,5,6,7)]
+data=rbind(rep(100,6) , rep(0,6) , tsong3)
+
+
+colors_border=c( rgb(0.2,0.5,0.5,0.9), rgb(0.8,0.2,0.5,0.9) , rgb(0.7,0.5,0.1,0.9), rgb(0.5,0.4,0.8,0.9) )
+colors_in=c( rgb(0.2,0.5,0.5,0.4), rgb(0.8,0.2,0.5,0.4) , rgb(0.7,0.5,0.1,0.4) , rgb(0.5,0.4,0.8,0.4))
+radarchart( data  , axistype=1 , 
+    #custom polygon
+    pcol=colors_border , pfcol=colors_in , plwd=4 , plty=1,
+    #custom the grid
+    cglcol="grey", cglty=1, axislabcol="grey", caxislabels=seq(0,100,20), cglwd=0.5,
+    #custom labels
+    vlcex=1 , title="Ed Sheeran Top Songs"
+    )
+legend(x=1.3, y=1.0, legend = rownames(data[-c(1,2),]), bty = "n", pch=20 , col=colors_in , text.col = "black", cex=0.7, pt.cex=1.5)
+ 
+```
+
+### The Chainsmokers
+
+Chainsmoker's songs emphasiszed in energy and danceability.
+
+```{r }
+tsong11 <- filter(spotify_data, artists %in% c("The Chainsmokers"))
+tsong21<-  tsong11[, c(1,3,4,8,9,11,12)] 
+
+
+# radar chart
+rownames(tsong21)=tsong21$name
+tsong31 <- tsong21[, c(2,3,4,5,6,7)]
+data1=rbind(rep(100,6) , rep(0,6) , tsong31)
+
+
+colors_border=c( rgb(0.2,0.5,0.5,0.9), rgb(0.8,0.2,0.5,0.9) , rgb(0.7,0.5,0.1,0.9), rgb(0.5,0.4,0.8,0.9) )
+colors_in=c( rgb(0.2,0.5,0.5,0.4), rgb(0.8,0.2,0.5,0.4) , rgb(0.7,0.5,0.1,0.4) , rgb(0.5,0.4,0.8,0.4))
+radarchart( data1  , axistype=1 , 
+    #custom polygon
+    pcol=colors_border , pfcol=colors_in , plwd=4 , plty=1,
+    #custom the grid
+    cglcol="grey", cglty=1, axislabcol="grey", caxislabels=seq(0,100,20), cglwd=0.5,
+    #custom labels
+    vlcex=1 , title="The Chainsmokers Top Songs"
+    )
+legend(x=1.3, y=1.0, legend = rownames(data1[-c(1,2),]), bty = "n", pch=10 , col=colors_in , text.col = "black", cex=0.6, pt.cex=1.5)
+ 
+```
+### Drake
+
+Drake's work definitely focus on danceability
+
+```{r }
+tsong13 <- filter(spotify_data, artists %in% c("Drake"))
+tsong23<-  tsong13[, c(1,3,4,8,9,11,12)] 
+
+
+# radar chart
+rownames(tsong23)=tsong23$name
+tsong33 <- tsong23[, c(2,3,4,5,6,7)]
+data3=rbind(rep(100,6) , rep(0,6) , tsong33)
+
+
+colors_border=c( rgb(0.2,0.5,0.5,0.9), rgb(0.8,0.2,0.5,0.9) , rgb(0.7,0.5,0.1,0.9))
+colors_in=c( rgb(0.2,0.5,0.5,0.4), rgb(0.8,0.2,0.5,0.4) , rgb(0.7,0.5,0.1,0.4))
+ radarchart( data3  , axistype=1 , 
+    #custom polygon
+    pcol=colors_border , pfcol=colors_in , plwd=4 , plty=1,
+    #custom the grid
+    cglcol="grey", cglty=1, axislabcol="grey", caxislabels=seq(0,100,20), cglwd=0.5,
+    #custom labels
+    vlcex=1 , title="Drake Top Songs"
+    )
+legend(x=1.3, y=1.0, legend = rownames(data3[-c(1,2),]), bty = "n", pch=10 , col=colors_in , text.col = "black", cex=0.6, pt.cex=1.5)
+
+
+```
+
+###   Martin Garrix
+
+Martin's tracks are very interstering, his songs almost have showed an identical distribution. we can see his liveness is quite strong.
+
+```{r}
+tsong14 <- filter(spotify_data, artists %in% c("Martin Garrix"))
+tsong24<-  tsong14[, c(1,3,4,8,9,11,12)] 
+
+
+# radar chart
+rownames(tsong24)=tsong24$name
+tsong34 <- tsong24[, c(2,3,4,5,6,7)]
+data4=rbind(rep(100,6) , rep(0,6) , tsong34)
+
+
+colors_border=c( rgb(0.2,0.5,0.5,0.9), rgb(0.8,0.2,0.5,0.9) , rgb(0.7,0.5,0.1,0.9))
+colors_in=c( rgb(0.2,0.5,0.5,0.4), rgb(0.8,0.2,0.5,0.4) , rgb(0.7,0.5,0.1,0.4))
+radarchart( data4  , axistype=1 , 
+    #custom polygon
+    pcol=colors_border , pfcol=colors_in , plwd=4 , plty=1,
+    #custom the grid
+    cglcol="grey", cglty=1, axislabcol="grey", caxislabels=seq(0,100,20), cglwd=0.5,
+    #custom labels
+    vlcex=1 , title="Martin Garrix Top Songs"
+    )
+legend(x=1.3, y=1.0, legend = rownames(data4[-c(1,2),]), bty = "n", pch=10 , col=colors_in , text.col = "black", cex=0.6, pt.cex=1.5)
+
+
+```
+
+## Tonality of Top 100 songs
+
+In general , Major chords revoke a happy feeling, whereas Minor chords represent sadness. I m very surprised Csharp major is used so often. In addition, Top 3 categories all share a grief, sad emotions.
+
+```{r tonality}
+tone1 <- group_by(spotify_data, keylabel )
+tone2 <- dplyr::summarise(tone1,  count=n())
+tone2 <- arrange(tone2, desc(count))
+
+
+# Tonality treemap
+treemap(tone2, index="keylabel", vSize="count", type="index", 
+        palette="Pastel2", title="Top 100 Songs Key charactersics and Emotion", fontsize.title=12)
+
+
+```
+
+##  Major vs Minor
+
+We can see more songs use Major chords indeed.
+
+```{r}
+
+ctone1 <- group_by(spotify_data, keys )
+ctone2 <- dplyr::summarise(ctone1,  count=n())
+ctone2 <- arrange(ctone2, desc(count))
+
+
+# Tonality treemap
+treemap(ctone2, index="keys", vSize="count", type="index", 
+        palette="Pastel2", title="Top 100 Songs Key charactersics", fontsize.title=12)
+# major vs Minor
+major <- group_by(spotify_data, tone )
+major2 <- dplyr::summarise(major,  count=n())
+
+# Major treemap
+treemap(major2, index="tone", vSize="count", type="index", 
+        palette="Pastel1", title="Top 100 Songs Major", fontsize.title=12)
+
+```
+
+# Key signature analysis {.tabset .tabset-fade .tabset-pills}
+
+## Emotion with Key signature
+
+From the graph, we can see more than 15 songs used C# major and A# minor, which means F,A,C,G,D,A,B sharp. Im quite surprised the popular songs used such complicated key signatures.
+
+```{r}
+
+keystone1 <- group_by(spotify_data, keysign, keys )
+keystone2 <- dplyr::summarise(keystone1,  count=n())
+keystone2 <- arrange(keystone2, desc(count))
+
+keysp1<- ggplot(data=keystone2, aes(x=reorder(keysign,count), y=count))+geom_bar(aes(y=count, fill=keys),stat="identity", alpha=0.8 )+ ylab("Value")+ xlab("Variables to a song")+coord_flip()+ggtitle("Key signature and Emotion")
+keysp1
+
+
+```
+
+## What key signiture uses the most
+```{r}
+# Key signature count
+keys1 <- group_by(spotify_data, keysign )
+keys2 <- dplyr::summarise(keys1,  count=n())
+keys2 <- arrange(keys2, desc(count))
+
+# key signiature treemap
+treemap(keys2, index="keysign", vSize="count", type="index", 
+        palette="Pastel2", title="Top 100 Key Signature", fontsize.title=12)
+
+```
+# Rythme analysis  {.tabset .tabset-fade .tabset-pills}
+
+## Tempo Classification
+
+Now we tak a look at what is the most popular Tempo type amont the top 100 songs, We will use the categorized tempo type to do the analysis. We can see about half of the songs has tempo between 76 to 108. So Andante is the most used tempo. Adagio is the least used tempo. I guess slow songs is not that popular then.
+
+```{r}
+tempo1 <- group_by(spotify_data, tempoc ,tlabel )
+tempo2 <- dplyr::summarise(tempo1,  count=n())
+tempo2 <- arrange(tempo2, desc(count))
+
+tempop1<- ggplot(data=tempo2, aes(x=reorder(tempoc,count), y=count))+geom_bar(aes(y=count),stat="identity", alpha=0.8,fill="skyblue" )+ ylab("Count")+ xlab("Tempo Type")+ggtitle("What is the most popular Tempo type? ")+
+  geom_text(aes(label=tlabel), vjust=1, color="maroon", size=3.5)+ theme_minimal()
+tempop1
+
+
+
+```
+## general Tempo range
+
+```{r}
+
+spotify_data$id1=seq(1, nrow(spotify_data))
+
+plot1 <- ggplot(spotify_data, aes(x=reorder(id1,tempo),y=tempo)) +geom_bar(stat = "identity", col = "pink", fill = "pink")+theme_minimal()
+plot1
+
+qqnorm(spotify_data$tempo)
+qqline(spotify_data$tempo, col="red")
+
+```
+
+# Categorical analysis on Key and Tempo{.tabset .tabset-fade .tabset-pills}
+
+
+
+## Heatmap Valence respect to Key and Tempo
+
+The songs showed the most valence with the Moderato tempo in C# major.
+
+```{r}
+vorig <- group_by(spotify_data, tempoc , keys)
+vorig1 <- summarise(vorig,  count=n() ,rate= mean(valence))
+
+ ggplot(vorig1, aes(x=tempoc, y=keys, fill = rate)) + 
+    geom_tile(colour = "white")  +
+    scale_fill_gradient(low="skyblue", high="Pink") +
+    labs(x="Tempo", y=NULL, title="Heatmap of Valence" ,fill="Valence")
+
+```
+## Heatmap Danceability respect to Key and Tempo
+
+We can see from the Adagio and G minor give the most dance ability. We can try
+to dance with Bach Sonata No.1 in G minor, BWV 1001- Adagio at home.
+
+```{r}
+orig <- group_by(spotify_data, tempoc , keys)
+orig1 <- summarise(orig,  count=n() ,rate= mean(danceability))
+
+ ggplot(orig1, aes(x=tempoc, y=keys, fill = rate)) + 
+    geom_tile(colour = "white")  +
+    scale_fill_gradient(low="lightgreen", high="violetred") +
+    labs(x="Tempo", y=NULL, title="Heatmap of Danceability" ,fill="Danceability")
+
+```
+## Heatmap Energy respect to Key and Tempo
+
+we can see Vivace and A# major demonstrated high energy. I think higher speed will represent higher energy. However, we notice with Vivace and C# major, the energy is quite low. I think that's because C# has grief depressive feeling
+
+```{r}
+eorig <- group_by(spotify_data, tempoc , keys)
+eorig1 <- summarise(eorig,  count=n() ,rate= mean(energy))
+
+ ggplot(eorig1, aes(x=tempoc, y=keys, fill = rate)) + 
+    geom_tile(colour = "white")  +
+    scale_fill_gradient(low="yellow", high="red") +
+    labs(x="Tempo", y=NULL, title="Heatmap of Engery" ,fill="Engery")
+ 
+ 
+
+```
+## Heatmap Speechiness respect to Key and Tempo
+```{r}
+
+ sorig <- group_by(spotify_data, tempoc , keys)
+sorig1 <- summarise(eorig,  count=n() ,rate= mean(speechiness))
+
+ ggplot(sorig1, aes(x=tempoc, y=keys, fill = rate)) + 
+    geom_tile(colour = "white")  +
+    scale_fill_gradient(low="yellow", high="green") +
+    labs(x="Tempo", y=NULL, title="Heatmap of Speechiness" ,fill="Speechiness")
+ 
+```

@@ -1,0 +1,6 @@
+"0","ctone1 <- group_by(spotify_data, keys )"
+"0","ctone2 <- dplyr::summarise(ctone1,  count=n())"
+"0","ctone2 <- arrange(ctone2, desc(count))"
+"0","# Tonality treemap"
+"0","treemap(ctone2, index=""keys"", vSize=""count"", type=""index"", "
+"0","        palette=""Pastel2"", title=""Top 100 Songs Key charactersics"", fontsize.title=12)"

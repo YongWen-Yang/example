@@ -1,0 +1,2 @@
+"0","spotify_data$duration_ms <- round(spotify_data$duration_ms / 1000)"
+"0","colnames(spotify_data)[15] <- ""duration"""

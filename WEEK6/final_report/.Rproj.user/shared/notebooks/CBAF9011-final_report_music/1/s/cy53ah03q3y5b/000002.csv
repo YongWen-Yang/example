@@ -1,0 +1,6 @@
+"0","orig <- group_by(spotify_data, tempoc , keys)"
+"0","orig1 <- summarise(orig,  count=n() ,rate= mean(danceability))"
+"0"," ggplot(orig1, aes(x=tempoc, y=keys, fill = rate)) + "
+"0","    geom_tile(colour = ""white"")  +"
+"0","    scale_fill_gradient(low=""lightgreen"", high=""violetred"") +"
+"0","    labs(x=""Tempo"", y=NULL, title=""Heatmap of Danceability"" ,fill=""Danceability"")"

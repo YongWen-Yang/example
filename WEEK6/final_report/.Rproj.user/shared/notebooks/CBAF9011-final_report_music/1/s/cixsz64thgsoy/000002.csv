@@ -1,0 +1,4 @@
+"0","library(corrplot)"
+"0","spotify_data_num <- spotify_data[,-(1:3)]"
+"0","mtCor <- cor(spotify_data_num)"
+"0","corrplot(mtCor, method = ""ellipse"", type = ""upper"", tl.srt = 45)"

@@ -1,0 +1,6 @@
+"0","vorig <- group_by(spotify_data, tempoc , keys)"
+"0","vorig1 <- summarise(vorig,  count=n() ,rate= mean(valence))"
+"0"," ggplot(vorig1, aes(x=tempoc, y=keys, fill = rate)) + "
+"0","    geom_tile(colour = ""white"")  +"
+"0","    scale_fill_gradient(low=""skyblue"", high=""Pink"") +"
+"0","    labs(x=""Tempo"", y=NULL, title=""Heatmap of Valence"" ,fill=""Valence"")"

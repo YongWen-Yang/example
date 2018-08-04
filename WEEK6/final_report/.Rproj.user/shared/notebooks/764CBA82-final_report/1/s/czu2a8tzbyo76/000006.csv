@@ -1,0 +1,5 @@
+"0","spotify_data$duration_ms <- round(spotify_data$duration_ms / 1000)"
+"2","Unknown or uninitialised column: 'duration_ms'."
+"2","Error in `$<-.data.frame`(`*tmp*`, duration_ms, value = numeric(0)) : 
+  replacement has 0 rows, data has 100
+"
