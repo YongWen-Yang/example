@@ -64,4 +64,4 @@ EDA深入做ANOVA=>[EDA_song](https://yongwen-yang.github.io/example/WEEK4/EDA_s
 練習使用Shiny    
 # WEEK6     
 [final_report_music2017](https://abcxzew.shinyapps.io/final/)     
-[final_report_music2017PPT](https://docs.google.com/presentation/d/17CzWLTnE-lR538IDUP0zPEdpO8PiOMVOO3hv664qrA0/edit#slide=id.p1)
+[final_report_music2017PPT](https://docs.google.com/presentation/d/17CzWLTnE-lR538IDUP0zPEdpO8PiOMVOO3hv664qrA0/edit?usp=sharing)
