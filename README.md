@@ -58,6 +58,9 @@ EDA深入做ANOVA=>[EDA_song](https://yongwen-yang.github.io/example/WEEK4/EDA_s
  用TIMSS2011的data做T-Test/ANOVA/regression [regression](https://yongwen-yang.github.io/example/WEEK4/regression.html)     
 [final_report_music](https://yongwen-yang.github.io/example/WEEK6/final_report/final_report_music.html)
 # WEEK5
-課堂作業    
-
+課堂學習    
+1.Shiny呈現
 回家作業    
+練習使用Shiny    
+# WEEK6     
+[final_report_music2017](https://abcxzew.shinyapps.io/final/)     
